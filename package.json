@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "testcafe": "^2.4.0"
+  },
+  "scripts": {
+    "test": "testcafe chrome tests/Devices.test.js"
   }
 }
