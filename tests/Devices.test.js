@@ -1,6 +1,6 @@
 import { HomePage } from "../pages/HomePage";
 import { AddDevicePage } from "../pages/AddDevicePage";
-import { getAllDevices, renameFirstDevice, deleteLastDevice } from "../utils";
+import { getAllDevices, renameFirstDevice, deleteLastDevice, getTimeStamp, getRandomType, getRandomCapacity } from "../utils";
 
 const homePage = new HomePage();
 const addDevicePage = new AddDevicePage();
@@ -28,8 +28,11 @@ test('first test', async t =>{
  */
 test('second test', async t => {
     await homePage.clickAddDevice(t);
-    await addDevicePage.createDevice(t, 'New_Test_Device', '19');
-    homePage.isElementVisible(t, 'New_Test_Device', 'WINDOWS WORKSTATION', '19');
+    const deviceName = `Device added ${getTimeStamp()}`;
+    const deviceCapacity = getRandomCapacity();
+    const deviceType = getRandomType();
+    await addDevicePage.createDevice(t, deviceName, deviceType, deviceCapacity);
+    await homePage.isElementVisible(t, deviceName, deviceType, deviceCapacity);
 });
 
 /**
@@ -38,8 +41,11 @@ test('second test', async t => {
  * Reload the page and verify the modified device has the new name.
  */
 test('third test', async t => {
-    await renameFirstDevice(t, "testing_update", "MAC", "15");
-    await homePage.isElementVisible(t, 'testing_update', 'MAC', '15');
+    const deviceName = `Device renamed ${getTimeStamp()}`;
+    const deviceCapacity = getRandomCapacity();
+    const deviceType = getRandomType();
+    await renameFirstDevice(t, deviceName, deviceType, deviceCapacity);
+    await homePage.isElementVisible(t, deviceName, deviceType, deviceCapacity);
 });
 
 /**Test 4 (required)

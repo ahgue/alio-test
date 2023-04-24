@@ -4,17 +4,10 @@ export function getDeviceName(deviceName) {
     return Selector('span.device-name').withExactText(deviceName);
 }
 
-export function getDeviceType(type) {
-    return Selector('span.device-type').withExactText(type);
-}
-
-export function getDeviceCapacity(capacity) {
-    return Selector('span.device-capacity').withText(capacity)
-}
-
 export async function getAllDevices(t) {
-    return await t.request('http://localhost:3000/devices');
-
+    const devicesList = await t.request(`${process.env.API_URL}/devices`);
+    await t.expect(devicesList.status).eql(200, 'Devices call failed')
+    return devicesList
 }
 
 export async function reloadPage(t) {
@@ -27,7 +20,7 @@ export async function renameFirstDevice(t, name, type, capacity) {
     const devicesList = await getAllDevices(t);
     const firstDevice = await devicesList.body[0];
     const updateDevice = await t.request.put({
-        url: `http://localhost:3000/devices/${firstDevice.id}`,
+        url: `${process.env.API_URL}/devices/${firstDevice.id}`,
         body: {
             "id": firstDevice.id,
             "system_name": name,
@@ -47,9 +40,23 @@ export async function deleteLastDevice(t) {
     const lastDevice = await devicesList.body;
     const lastIndex = lastDevice[lastDevice.length - 1];
     const deleteDevice = await t.request.delete({
-        url: `http://localhost:3000/devices/${lastIndex.id}`
+        url: `${process.env.API_URL}/devices/${lastIndex.id}`
     })
     await t.expect(deleteDevice.status).eql(200);
     await reloadPage(t);
     return lastIndex;
+}
+
+export function getTimeStamp() {
+    return Date.now().toString();
+}
+
+export function getRandomType() {
+    const deviceTypes = ['WINDOWS WORKSTATION', 'MAC', 'WINDOWS SERVER']
+    const random = Math.floor(Math.random() * deviceTypes.length);
+    return deviceTypes[random]
+}
+
+export function getRandomCapacity() {
+    return Math.floor((Math.random() * 100) + 1).toString();
 }
